@@ -1,3 +1,7 @@
+- name: Clean build
+        run: |
+          rm -rf .buildozer
+          rm -rf bin
 [app]
 
 title = AI Dungeon RPG
