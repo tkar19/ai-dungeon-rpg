@@ -1,55 +1,52 @@
 name: Build APK Stable
 
 on:
-  workflow_dispatch:
+workflow_dispatch:
 
 jobs:
-  build:
-    runs-on: ubuntu-22.04
+build:
+runs-on: ubuntu-22.04
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+steps:
+  - name: Checkout
+    uses: actions/checkout@v4
 
-      - name: Clean
-        run: |
-          rm -rf .buildozer
-          rm -rf bin
+  - name: Clean
+    run: |
+      rm -rf .buildozer
+      rm -rf bin
 
-      # ----------------------------
-      # FIX JAVA VERSION (IMPORTANT)
-      # ----------------------------
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: 17
-        
-          
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.10"
+  - name: Setup Java
+    uses: actions/setup-java@v4
+    with:
+      distribution: temurin
+      java-version: 17
 
-      - name: Install system deps
-        run: |
-          sudo apt update
-          sudo apt install -y git zip unzip python3-pip
-          pip install --upgrade pip
-          pip install cython buildozer
+  - name: Setup Python
+    uses: actions/setup-python@v5
+    with:
+      python-version: "3.10"
 
-      # ----------------------------
-      # BUILD
-      # ----------------------------
-      - name: Build APK
-        run: |
-          buildozer -v android debug
+  - name: Install system deps
+    run: |
+      sudo apt update
+      sudo apt install -y git zip unzip python3-pip
+      pip install --upgrade pip
+      pip install cython buildozer
 
-      # ----------------------------
-      # OUTPUT
-      # ----------------------------
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: apk
-          path: bin/*.apk
+  - name: Accept Android licenses
+    run: |
+      mkdir -p ~/.android
+      echo "24333f8a63b6825ea9c5514f83c2829b004d1fee" > ~/.android/repositories.cfg || true
+
+  - name: Build APK
+    env:
+      ANDROID_SDK_ACCEPT_LICENSE: "True"
+    run: |
+      buildozer -v android debug
+
+  - name: Upload APK
+    uses: actions/upload-artifact@v4
+    with:
+      name: apk
+      path: bin/*.apk
