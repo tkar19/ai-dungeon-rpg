@@ -23,6 +23,24 @@ jobs:
           pip install --upgrade pip
           pip install buildozer cython
 
+      - name: Setup Android SDK
+        run: |
+          mkdir -p ~/.buildozer/android/platform/android-sdk
+          cd ~/.buildozer/android/platform/android-sdk
+          
+          # Download Android SDK tools
+          wget https://dl.google.com/android/repository/commandlinetools-linux-10406996_latest.zip
+          unzip -q commandlinetools-linux-10406996_latest.zip
+          
+          # Set PATH
+          export PATH="$PATH:$HOME/.buildozer/android/platform/android-sdk/cmdline-tools/bin"
+          export ANDROID_SDK_ROOT=$HOME/.buildozer/android/platform/android-sdk
+          
+          # Install required components
+          yes | sdkmanager --sdk_root=$ANDROID_SDK_ROOT "platforms;android-34"
+          yes | sdkmanager --sdk_root=$ANDROID_SDK_ROOT "build-tools;35.0.0"
+          yes | sdkmanager --sdk_root=$ANDROID_SDK_ROOT "ndk;27.1.12516404"
+
       - name: Build APK
         run: |
           buildozer init || true
