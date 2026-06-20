@@ -1,7 +1,3 @@
-- name: Clean build
-        run: |
-          rm -rf .buildozer
-          rm -rf bin
 [app]
 
 title = AI Dungeon RPG
@@ -21,4 +17,6 @@ fullscreen = 1
 android.permissions = INTERNET
 
 [buildozer]
+
 log_level = 2
+warn_on_root = 1
